@@ -7,11 +7,12 @@ import {
   DeleteButton,
 } from './Contact.styled';
 import { useDispatch } from 'react-redux';
-import { deleteContact } from 'redux/contactsSlice';
+import { deleteContact } from 'redux/operations';
 
 const Contact = props => {
-  const { id, name, number } = props;
+  const { id, name, phone } = props;
   const dispatch = useDispatch();
+
   const handleDelete = () => {
     dispatch(deleteContact(id));
   };
@@ -19,7 +20,7 @@ const Contact = props => {
   return (
     <ListItem>
       <ContactName>{name}</ContactName>
-      <ContactNumber>{number}</ContactNumber>
+      <ContactNumber>{phone}</ContactNumber>
       <DeleteButton type="button" onClick={handleDelete}>
         X
       </DeleteButton>
@@ -28,7 +29,7 @@ const Contact = props => {
 };
 Contact.propTypes = {
   name: PropTypes.string.isRequired,
-  number: PropTypes.string.isRequired,
+  phone: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
 };
 

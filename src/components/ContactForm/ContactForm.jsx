@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'redux/contactsSlice';
 
 import { Formik, ErrorMessage } from 'formik';
 import {
@@ -11,13 +10,15 @@ import {
   Wrapper,
 } from './ContactForm.styled';
 import * as Yup from 'yup';
+import { addContact } from 'redux/operations';
+import { getContacts } from 'redux/selectors';
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
     .min(3, 'Too Short!')
     .max(50, 'Too Long!')
     .required('Required'),
-  number: Yup.string()
+  phone: Yup.string()
     .required()
     .matches(/^[0-9]+$/, 'Must be only digits')
     .min(3, 'Must be more 3 digits'),
@@ -25,22 +26,22 @@ const SignupSchema = Yup.object().shape({
 
 const ContactForm = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts);
+  const items = useSelector(getContacts);
 
   const handleSubmit = (values, { resetForm }) => {
-    const { name, number } = values;
-    const isNameAlreadyExist = Boolean(
-      contacts.data.find(contact => contact.name === name)
-    );
+    const { name, phone } = values;
+    const isNameAlreadyExist =
+      items.length > 0 && Boolean(items.find(item => item.name === name));
+    console.log(isNameAlreadyExist);
     if (isNameAlreadyExist) {
       alert(`${name} is already in contacts.`);
       return;
     }
     resetForm();
-    dispatch(addContact(name, number));
+    dispatch(addContact({ name, phone }));
   };
 
-  const initialValues = { number: '', name: '' };
+  const initialValues = { phone: '', name: '' };
   return (
     <Formik
       initialValues={initialValues}
@@ -58,7 +59,7 @@ const ContactForm = () => {
               placeholder="Brendan Eich"
               required
             />
-            <ErrorMessage name="name" />
+            <ErrorMessage name="phone" />
           </Wrapper>
         </Label>
 
@@ -67,7 +68,7 @@ const ContactForm = () => {
           <Wrapper>
             <Field
               type="tel"
-              name="number"
+              name="phone"
               title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
               required
               placeholder="063-111-22-33"
