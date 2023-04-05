@@ -10,14 +10,14 @@ import {
 } from '.';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { getContacts, getError, getIsLoading } from 'redux/selectors';
+import { selectContacts, selectError, selectIsLoading } from 'redux/selectors';
 import { useEffect } from 'react';
 import { fetchContacts } from 'redux/operations';
 
 const App = () => {
-  const isLoading = useSelector(getIsLoading);
-  const contacts = useSelector(getContacts);
-  const error = useSelector(getError);
+  const isLoading = useSelector(selectIsLoading);
+  const contacts = useSelector(selectContacts);
+  const error = useSelector(selectError);
   const dispatch = useDispatch();
 
   useEffect(() => {

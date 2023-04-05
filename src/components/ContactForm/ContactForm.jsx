@@ -11,7 +11,7 @@ import {
 } from './ContactForm.styled';
 import * as Yup from 'yup';
 import { addContact } from 'redux/operations';
-import { getContacts } from 'redux/selectors';
+import { selectContacts } from 'redux/selectors';
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
@@ -26,7 +26,7 @@ const SignupSchema = Yup.object().shape({
 
 const ContactForm = () => {
   const dispatch = useDispatch();
-  const items = useSelector(getContacts);
+  const items = useSelector(selectContacts);
 
   const handleSubmit = (values, { resetForm }) => {
     const { name, phone } = values;
