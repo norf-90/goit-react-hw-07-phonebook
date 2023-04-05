@@ -1,11 +1,10 @@
 import styled from '@emotion/styled';
 
-export const ListItem = styled.ul`
+export const ListItem = styled.li`
   font-size: 20px;
   margin-bottom: 5px;
   display: flex;
-
-  justify-content: space-between;
+  gap: 30px;
   align-items: center;
 `;
 
