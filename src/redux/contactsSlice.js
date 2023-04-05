@@ -1,6 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 
 import { addContact, deleteContact, fetchContacts } from './operations';
+const actions = [addContact, deleteContact, fetchContacts];
 
 const handlePending = state => {
   console.log(state.isLoading);
@@ -18,31 +19,34 @@ const contactsSlice = createSlice({
     isLoading: false,
     error: null,
   },
-  extraReducers: {
-    [fetchContacts.pending]: handlePending,
-    [addContact.pending]: handlePending,
-    [deleteContact.pending]: handlePending,
-
-    [fetchContacts.rejected]: handleRejected,
-    [addContact.rejected]: handleRejected,
-    [deleteContact.rejected]: handleRejected,
-
-    [fetchContacts.fulfilled](state, action) {
-      state.isLoading = false;
-      state.error = null;
-      state.items = action.payload;
-    },
-    [addContact.fulfilled](state, action) {
-      state.isLoading = false;
-      state.error = null;
-      state.items.unshift(action.payload);
-    },
-    [deleteContact.fulfilled](state, action) {
-      state.isLoading = false;
-      state.error = null;
-      state.items = state.items.filter(item => item.id !== action.payload?.id);
-    },
-  },
+  extraReducers: builder =>
+    builder
+      .addCase(fetchContacts.fulfilled, (state, action) => {
+        state.items = action.payload;
+      })
+      .addCase(addContact.fulfilled, (state, action) => {
+        state.items.unshift(action.payload);
+      })
+      .addCase(deleteContact.fulfilled, (state, action) => {
+        state.items = state.items.filter(
+          item => item.id !== action.payload?.id
+        );
+      })
+      .addMatcher(
+        isAnyOf(...actions.map(action => action.pending)),
+        handlePending
+      )
+      .addMatcher(
+        isAnyOf(...actions.map(action => action.rejected)),
+        handleRejected
+      )
+      .addMatcher(
+        isAnyOf(...actions.map(action => action.fulfilled)),
+        state => {
+          state.isLoading = false;
+          state.error = null;
+        }
+      ),
 });
 
-export const constactsReducer = contactsSlice.reducer;
+export const contactsReducer = contactsSlice.reducer;
